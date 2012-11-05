@@ -4,10 +4,13 @@ A small daemon for OpenBSD that will watch apm status and run commands when
 the machine is off A/C power and the battery's "minutes remaining" calculation
 falls below certain values.
 
-By default, `shutdownd` will run [yad](http://yad.googlecode.com/), an X11
-dialog utility, warning about low battery when the battery reports 25 minutes
-remaining.  It will run `sudo halt -p` when the battery status reports 5
-minutes remaining.
+By default, when the battery reports 25 minutes remaining, `shutdownd` will
+run [yad](http://yad.googlecode.com/), an X11 dialog utility, warning about the
+low battery.  When the battery reports 5 minutes remaining, `shutdownd` will
+run `sudo halt -p`.
+
+While this utility does daemonize by default, it should be run as a normal user
+during an X session in order for `yad` to properly display an X window.
 
 ####Options
 

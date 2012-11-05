@@ -5,7 +5,7 @@ CFLAGS	= -O2 -Wall -Wunused -Wmissing-prototypes -Wstrict-prototypes
 CFLAGS += -g
 
 PREFIX	 = /usr/local
-BINDIR	 = $(DESTDIR)$(PREFIX)/sbin
+BINDIR	 = $(DESTDIR)$(PREFIX)/bin
 
 INSTALL_PROGRAM = install -s
 

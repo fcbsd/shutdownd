@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2012 joshua stein <jcs@jcs.org>
+ * Copyright (c) 2012, 2013 joshua stein <jcs@jcs.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -29,11 +29,14 @@
 #include <sys/param.h>
 #include <sys/types.h>
 #include <machine/apmvar.h>
+
 #include <err.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 #include <stdlib.h>
+#include <syslog.h>
 #include <unistd.h>
 
 #define	DEFAULT_WARN_MINS	25
@@ -48,14 +51,15 @@
 				"<b>$shutdown_minutes</b>.\""
 
 #define	DEFAULT_SHUTDOWN_MINS	5
-#define	DEFAULT_SHUTDOWN_CMD	"sudo halt -p"
+#define	DEFAULT_SHUTDOWN_CMD	"/usr/bin/sudo /sbin/halt -p"
 
 extern char *__progname;
 
 void usage(void);
+void yell(char *, ...);
 void expand_var(char *, char *, int, char *, char *);
 void expand_warn_cmd(char *, char *, int, int, struct apm_power_info *);
-void execute(char *command);
+void execute(char *);
 
 int verbose = 0;
 int warned = 0;
@@ -66,6 +70,27 @@ usage()
 	fprintf(stderr, "usage: %s [-v] [-s shutdown mins] [-S shutdown cmd] "
 	    "[-w warn mins] [-W warn cmd]\n", __progname);
 	exit(1);
+}
+
+void
+yell(char *fmt, ...)
+{
+	char *s;
+	va_list ap;
+
+	if ((s = malloc(512)) == NULL)
+		errx(1, "malloc");
+
+	va_start(ap, fmt);
+	(void)vsnprintf(s, 512, fmt, ap);
+	va_end(ap);
+
+	if (verbose) {
+		write(STDERR_FILENO, s, strlen(s));
+		write(STDERR_FILENO, "\n", 1);
+	}
+	else
+		syslog(LOG_ALERT, s);
 }
 
 /* dst = src.gsub(var, data) */
@@ -121,7 +146,7 @@ execute(char *command)
 
 	switch (fork()) {
 	case -1:
-		warnx("fork of %s failed", command);
+		yell("fork of %s failed", command);
 		break;
 	case 0:
 		execv("/bin/sh", argp);
@@ -180,8 +205,10 @@ main(int argc, char *argv[])
 		daemon(0, 0);
 
 	for (;;) {
-		if (ioctl(apm_fd, APM_IOC_GETPOWER, &apm_info) < 0)
-			errx(1, "can't read apm power");
+		if (ioctl(apm_fd, APM_IOC_GETPOWER, &apm_info) < 0) {
+			yell("can't read apm power");
+			exit(1);
+		}
 
 		if (apm_info.ac_state == APM_AC_ON)
 			goto sleeper;
@@ -197,18 +224,15 @@ main(int argc, char *argv[])
 			expand_warn_cmd(warn_cmd_tmpl, warn_cmd, PATH_MAX,
 			    shutdown_mins, &apm_info);
 
-			if (verbose)
-				printf("minutes remaining below %d, running "
-				    "warn command: %s\n", warn_mins, warn_cmd);
+			yell("minutes remaining below %d, running warn "
+			    "command: %s", warn_mins, warn_cmd);
 
 			warned = 1;
 			execute(warn_cmd);
 		}
 		else if (apm_info.minutes_left <= shutdown_mins) {
-			if (verbose)
-				printf("minutes remaining below %d, running "
-				    "shutdown command: %s\n", shutdown_mins,
-				    shutdown_cmd);
+			yell("minutes remaining below %d, running shutdown "
+			    "command: %s\n", shutdown_mins, shutdown_cmd);
 
 			execute(shutdown_cmd);
 			exit(0);

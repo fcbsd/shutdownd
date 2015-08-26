@@ -51,7 +51,7 @@
 				"<b>$shutdown_minutes</b>.\""
 
 #define	DEFAULT_SHUTDOWN_MINS	5
-#define	DEFAULT_SHUTDOWN_CMD	"/usr/bin/sudo /sbin/halt -p"
+#define	DEFAULT_SHUTDOWN_CMD	"/usr/bin/doas /sbin/halt -p"
 
 extern char *__progname;
 

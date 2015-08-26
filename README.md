@@ -32,8 +32,8 @@ a `yad` command displaying the amount of time left before shutdown.
 5.
 
 * `-S [command]`: Command to run when shutting down, passed to `sh -c`.
-Defaults to `sudo halt -p`.  `sudoers` should allow access to halt without a
-password (`%wheel ALL = /sbin/halt NOPASSWD`) for this to work.
+Defaults to `doas halt -p`.  `doas.conf` should allow access to halt without a
+password (`permit nopass :%wheel cmd /sbin/halt`) for this to work.
 
 ####License
 

@@ -7,7 +7,7 @@ falls below certain values.
 By default, when the battery reports 25 minutes remaining, `shutdownd` will
 run [yad](http://yad.googlecode.com/), an X11 dialog utility, warning about the
 low battery.  When the battery reports 5 minutes remaining, `shutdownd` will
-run `sudo halt -p`.
+run `doas halt -p`.
 
 While this utility does daemonize by default, it should be run as a normal user
 during an X session in order for `yad` to properly display an X window.

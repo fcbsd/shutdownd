@@ -1,6 +1,6 @@
-###shutdownd
+### shutdownd
 
-A small daemon for OpenBSD that will watch apm status and run commands when
+A small daemon for OpenBSD that will watch `apm(8)` status and run commands when
 the machine is off A/C power and the battery's "minutes remaining" calculation
 falls below certain values.
 
@@ -12,7 +12,7 @@ run `doas halt -p`.
 While this utility does daemonize by default, it should be run as a normal user
 during an X session in order for `yad` to properly display an X window.
 
-####Options
+#### Options
 
 * `-v`: Verbose - don't daemonize, report progress to STDOUT.  Commands are
 still run.
@@ -28,14 +28,13 @@ a `yad` command displaying the amount of time left before shutdown.
 	`$shutdown_minutes` will be expanded in the command text to the amount of
 	minutes before the shutdown command is run, followed by "minute" or "minutes".
 
-* `-s [minutes]`: Minutes remaining when shutdown command is run.  Defaults to
-5.
+* `-s [minutes]`: Minutes remaining when shutdown command is run.  Defaults to 5.
 
 * `-S [command]`: Command to run when shutting down, passed to `sh -c`.
 Defaults to `doas halt -p`.  `doas.conf` should allow access to halt without a
 password (`permit nopass :%wheel cmd /sbin/halt`) for this to work.
 
-####License
+#### License
 
 	Copyright (c) 2012 joshua stein <jcs@jcs.org>
 

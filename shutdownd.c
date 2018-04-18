@@ -90,7 +90,7 @@ yell(char *fmt, ...)
 		write(STDERR_FILENO, "\n", 1);
 	}
 	else
-		syslog(LOG_ALERT, s);
+		syslog(LOG_ALERT, "%s", s);
 }
 
 /* dst = src.gsub(var, data) */

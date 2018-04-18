@@ -28,8 +28,7 @@ a `yad` command displaying the amount of time left before shutdown.
 	`$shutdown_minutes` will be expanded in the command text to the amount of
 	minutes before the shutdown command is run, followed by "minute" or "minutes".
 
-* `-s [minutes]`: Minutes remaining when shutdown command is run.  Defaults to
-5.
+* `-s [minutes]`: Minutes remaining when shutdown command is run.  Defaults to 5.
 
 * `-S [command]`: Command to run when shutting down, passed to `sh -c`.
 Defaults to `doas halt -p`.  `doas.conf` should allow access to halt without a

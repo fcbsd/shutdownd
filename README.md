@@ -1,6 +1,6 @@
 ### shutdownd
 
-A small daemon for OpenBSD that will watch apm status and run commands when
+A small daemon for OpenBSD that will watch `apm(8)` status and run commands when
 the machine is off A/C power and the battery's "minutes remaining" calculation
 falls below certain values.
 

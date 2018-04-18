@@ -20,12 +20,17 @@ status and run commands when the machine is off A/C power and the battery's "min
 .Pp
 By default, when the battery reports 25 minutes remaining, 
 .Nm 
-will run [yad](http://yad.googlecode.com/), an X11 dialog utility, warning about the low battery.  When the battery reports 5 minutes remaining, 
-.Nm
 will run 
+.Xr yad 1 , 
+an X11 dialog utility, warning about the low battery.  When the battery reports 5 minutes remaining, 
+.Nm
+will run: 
+.Pp
 .Dl doas halt -p
 .Pp
-While this utility does daemonize by default, it should be run as a normal user during an X session in order for 
+While 
+.Nm
+daemonize's by default, it should be run as a normal user during an X session in order for 
 .Xr yad 1
 to properly display an X window.
 .Pp
@@ -51,11 +56,11 @@ Minutes remaining when shutdown command is run.  Defaults to 5.
 Command to run when shutting down, passed to 
 .Sq sh -c .  
 Defaults to 
-.Sq doas halt -p
+.Sq doas halt -p .
 .Xr doas.conf 5 
-should allow access to halt without a password (
-.Sq permit nopass :%wheel cmd /sbin/halt
-) for this to work.
+should allow access to halt without a password, for this to work: 
+.Bd -literal -offset indent
+permit nopass :%wheel cmd /sbin/halt
 .Sh SEE ALSO
 .Xr apm 8 ,
 .Xr doas.conf 5 ,

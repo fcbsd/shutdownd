@@ -1,0 +1,64 @@
+.Dd $Mdocdate$
+.Dt SHUTDOWND 1
+.Os
+.Sh Name
+.Nm shutdownd
+.Nd watch apm status and run commands when on battery
+.Sh SYNOPSIS
+.Nm shutdownd
+.Op Fl v
+.Op Fl w Ar minutes
+.Op Fl W Ar command
+.Op Fl s Ar minutes
+.Op Fl S Ar command
+.Sh DESCRIPTION
+The
+.Nm
+utility will watch 
+.Xr apm 8
+status and run commands when the machine is off A/C power and the battery's "minutes remaining" calculation falls below certain values.
+.Pp
+By default, when the battery reports 25 minutes remaining, 
+.Nm 
+will run [yad](http://yad.googlecode.com/), an X11 dialog utility, warning about the low battery.  When the battery reports 5 minutes remaining, 
+.Nm
+will run 
+.Dl doas halt -p
+.Pp
+While this utility does daemonize by default, it should be run as a normal user during an X session in order for 
+.Xr yad 1
+to properly display an X window.
+.Pp
+The options are as follows:
+.Bl -tag -width tenletters
+.It Fl v
+Verbose - don't daemonize, report progress to STDOUT.  Commands are still run.
+.It Fl w Ar minutes
+Minutes remaining when warn command is run.  Defaults to 25.
+.It Fl W Ar command
+Command to run when warning, passed to
+.Sq sh -c .  
+Defaults to a 
+.Sq yad
+command displaying the amount of time left before shutdown.  
+.Sq $battery_minutes
+will be expanded in the command text to the actual minutes remaining, followed by "minute" or "minutes".  
+.Sq $shutdown_minutes
+will be expanded in the command text to the amount of minutes before the shutdown command is run, followed by "minute" or "minutes".
+.It Fl s Ar minutes
+Minutes remaining when shutdown command is run.  Defaults to 5.
+.It Fl S Ar command
+Command to run when shutting down, passed to 
+.Sq sh -c .  
+Defaults to 
+.Sq doas halt -p
+.Xr doas.conf 5 
+should allow access to halt without a password (
+.Sq permit nopass :%wheel cmd /sbin/halt
+) for this to work.
+.Sh SEE ALSO
+.Xr apm 8 ,
+.Xr doas.conf 5 ,
+.Xr yad 1
+.Sh AUTHORS
+.An joshua stein Aq Mt jcs@jcs.org

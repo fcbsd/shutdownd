@@ -11,6 +11,7 @@ INSTALL_PROGRAM = install -s
 
 PROG	= shutdownd
 OBJS	= shutdownd.o
+MAN	= shutdownd.1
 
 all: $(PROG)
 

@@ -65,7 +65,7 @@ int verbose = 0;
 int warned = 0;
 
 void
-usage()
+usage(void)
 {
 	fprintf(stderr, "usage: %s [-v] [-s shutdown mins] [-S shutdown cmd] "
 	    "[-w warn mins] [-W warn cmd]\n", __progname);
